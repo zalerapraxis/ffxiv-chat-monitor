@@ -10,11 +10,12 @@
         <Button x:Name="btnStartChatWatch" Content="Start" HorizontalAlignment="Left" VerticalAlignment="Top" Width="75" Margin="10,10,0,0" Click="btnStartChatWatch_Click"/>
         <Button x:Name="btnStopChatWatch" Content="Stop" HorizontalAlignment="Left" VerticalAlignment="Top" Width="75" Margin="90,10,0,0" Click="BtnStopChatWatch_Click"/>
 
-        <CheckBox x:Name="chkbxToastNotification" Content="Toasts" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="170,13,0,0" IsChecked="True"/>
-        <CheckBox x:Name="chkbxSoundNotification" Content="Sound" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="228,13,0,0"/>
+        <CheckBox x:Name="chkbxToastNotification" Content="Toasts" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="250,13,0,0" IsChecked="True"/>
+        <CheckBox x:Name="chkbxSoundNotification" Content="Sound" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="308,13,0,0"/>
 
         <ScrollViewer Name="txtblkScrollViewer" HorizontalScrollBarVisibility="Hidden" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,35,0,0" Height="224" Width="372">
             <TextBlock x:Name="txtblkLog" TextWrapping="Wrap" Text="Good morning."/>
         </ScrollViewer>
+        <Button x:Name="btnSettings" Content="Settings" HorizontalAlignment="Left" VerticalAlignment="Top" Width="75" Margin="170,10,0,0" Click="BtnSettings_Click"/>
     </Grid>
 </Window>

@@ -1,22 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Diagnostics;
-using System.Linq;
 using System.Media;
 using System.Runtime.InteropServices;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
+using ffxiv_chat_monitor.Helpers;
 using Notifications.Wpf;
 using Sharlayan;
 using Sharlayan.Core;
@@ -34,35 +24,20 @@ namespace ffxiv_chat_monitor
         int _previousArrayIndex = 0;
         int _previousOffset = 0;
         // store ffxiv process for later, when we want to focus window
-        private IntPtr processHwid;
+        public static IntPtr processHwid;
 
         private CancellationTokenSource _cancelWatchTokenSource;
-        private readonly NotificationManager _notificationManager = new NotificationManager();
+
+        MemoryHelper memoryHelper = new MemoryHelper();
+        NotificationHelper notificationHelper = new NotificationHelper();
+        SettingsHelper settingsHelper = new SettingsHelper();
+
 
         public MainWindow()
         {
             InitializeComponent();
 
-            // hook sharlayan into ffxiv process memory
-            // eventually we'll need to make a way to select a specific process since we often run multiple clients
-            Process[] processes = Process.GetProcessesByName("ffxiv_dx11");
-            if (processes.Length > 0)
-            {
-                // supported: English, Chinese, Japanese, French, German, Korean
-                string gameLanguage = "English";
-                // whether to always hit API on start to get the latest sigs based on patchVersion, or use the local json cache (if the file doesn't exist, API will be hit)
-                bool useLocalCache = true;
-                // patchVersion of game, or latest
-                string patchVersion = "latest";
-                Process process = processes[0];
-                ProcessModel processModel = new ProcessModel
-                {
-                    Process = process,
-                    IsWin64 = true
-                };
-                MemoryHandler.Instance.SetProcess(processModel, gameLanguage, patchVersion, useLocalCache);
-                processHwid = process.MainWindowHandle;
-            }
+            memoryHelper.HookMemoryProcess();
         }
 
         private void btnStartChatWatch_Click(object sender, RoutedEventArgs e)
@@ -78,6 +53,12 @@ namespace ffxiv_chat_monitor
             _cancelWatchTokenSource.Cancel();
             // free this token from memory, else we'll start leaking - we make a new one each time we press start anyway
             _cancelWatchTokenSource.Dispose();
+        }
+
+        private void BtnSettings_Click(object sender, RoutedEventArgs e)
+        {
+            SettingsWindow settingWindow = new SettingsWindow(settingsHelper);
+            settingWindow.Show();
         }
 
         private async void WatchChatLog(CancellationToken cancelToken)
@@ -99,8 +80,8 @@ namespace ffxiv_chat_monitor
                 {
                     foreach (var chatEntry in chatLogEntries)
                     {
-                        // 000C: PM's | 0016: LS7
-                        if (chatEntry.Code == "000C" || chatEntry.Code == "0016" | chatEntry.Line.Contains("test"))
+                        // change this dictionary to whichever one we store our desired watch codes with - this one has all of them
+                        if (settingsHelper._chatCodesWatchingDictionary.Contains(chatEntry.Code))
                         {
                             LogChatEntry(chatEntry);
 
@@ -108,10 +89,10 @@ namespace ffxiv_chat_monitor
                             Application.Current.Dispatcher.Invoke(() =>
                             {
                                 if (chkbxToastNotification.IsChecked == true)
-                                    ToastNotifyUser(chatEntry);
+                                    notificationHelper.ToastNotifyUser(chatEntry);
 
                                 if (chkbxSoundNotification.IsChecked == true)
-                                    SoundNotifyUser();
+                                    notificationHelper.SoundNotifyUser();
                             });
                         }
                     }
@@ -121,24 +102,6 @@ namespace ffxiv_chat_monitor
             }
         }
 
-        private void ToastNotifyUser(ChatLogItem message)
-        {
-            // if our hooked copy of ffxiv isn't the foreground window, send a toast notification
-            if (processHwid != GetForegroundWindow())
-            {
-                var notificationContent = new NotificationContent { Message = message.Line, Type = NotificationType.Information };
-                _notificationManager.Show(notificationContent, onClick: () => SetForegroundWindow(processHwid));
-            }
-        }
-
-        private void SoundNotifyUser()
-        {
-            SoundPlayer player = new SoundPlayer("notification.wav");
-            player.LoadCompleted += delegate {
-                player.Play();
-            };
-            player.LoadAsync();
-        }
 
         private void LogChatEntry(ChatLogItem message)
         {
@@ -148,15 +111,9 @@ namespace ffxiv_chat_monitor
                 if (txtblkLog.Text.Length > 5000)
                     txtblkLog.Text = String.Empty;
 
-                txtblkLog.Text = txtblkLog.Text + Environment.NewLine + $"{message.TimeStamp} - {message.Line}";
+                txtblkLog.Text = txtblkLog.Text + Environment.NewLine + $"{message.Code} - {message.Line}";
                 txtblkScrollViewer.ScrollToEnd();
             });
-        }
-
-        [DllImport("user32.dll")]
-        static extern bool SetForegroundWindow(IntPtr hWnd);
-
-        [DllImport("user32.dll")]
-        private static extern IntPtr GetForegroundWindow();
+        }       
     }
 }
