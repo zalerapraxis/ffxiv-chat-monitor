@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.Diagnostics;
 using System.Linq;
 using System.Runtime.InteropServices;
@@ -10,9 +11,22 @@ using Sharlayan.Models;
 
 namespace ffxiv_chat_monitor.Helpers
 {
-    class MemoryHelper
+    public class MemoryHelper
     {
-        public void HookMemoryProcess()
+        internal OrderedDictionary processList = new OrderedDictionary();
+
+        public void GetMemoryProcessList()
+        {
+            // clear any existing items in processList, get list of processes, add each process's pid and start time to a dict
+            processList.Clear();
+            Process[] processes = Process.GetProcessesByName("ffxiv_dx11");
+            foreach (var process in processes)
+            {
+                processList.Add(process.StartTime, process.MainWindowHandle);
+            }
+        }
+
+        public void HookMemoryProcess(int index)
         {
             // hook sharlayan into ffxiv process memory
             // eventually we'll need to make a way to select a specific process since we often run multiple clients
@@ -25,7 +39,7 @@ namespace ffxiv_chat_monitor.Helpers
                 bool useLocalCache = true;
                 // patchVersion of game, or latest
                 string patchVersion = "latest";
-                Process process = processes[0];
+                Process process = processes[index];
                 ProcessModel processModel = new ProcessModel
                 {
                     Process = process,

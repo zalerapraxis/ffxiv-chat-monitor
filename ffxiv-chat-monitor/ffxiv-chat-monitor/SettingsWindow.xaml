@@ -5,10 +5,16 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:ffxiv_chat_monitor"
         mc:Ignorable="d"
-        Title="Settings" Height="388.757" Width="445.858">
+        Title="Settings" Height="328.757" Width="402.858">
     <Grid>
-        <ListBox x:Name="lstbxChatCodeReference" HorizontalAlignment="Left" Height="220" VerticalAlignment="Top" Width="180" Margin="10,10,0,0" MouseDoubleClick="lstbxChatCodeReference_OnMouseDoubleClick" />
-        <ListBox x:Name="lstbxChatCodeWatchlist" HorizontalAlignment="Left" Height="220" VerticalAlignment="Top" Width="180" Margin="195,10,0,0"/>
+
+
+        <ListBox x:Name="lstbxChatCodeReference" HorizontalAlignment="Left" Height="220" VerticalAlignment="Top" Width="180" Margin="10,68,0,0" MouseDoubleClick="lstbxChatCodeReference_OnMouseDoubleClick" />
+        <ListBox x:Name="lstbxChatCodeWatchlist" HorizontalAlignment="Left" Height="220" VerticalAlignment="Top" Width="180" Margin="195,68,0,0" MouseDoubleClick="lstbxChatCodeWatchlist_OnMouseDoubleClick" />
+        <Label Content="Process:" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,10,0,0"/>
+        <ComboBox x:Name="cmbxProcessList" HorizontalAlignment="Left" VerticalAlignment="Top" Width="185" Margin="70,14,0,0" />
+        <Button x:Name="btnSelectProcess" Content="Select" HorizontalAlignment="Left" VerticalAlignment="Top" Width="75" Margin="260,14,0,0" Height="22" Click="BtnSelectProcess_Click"/>
+
 
     </Grid>
 </Window>

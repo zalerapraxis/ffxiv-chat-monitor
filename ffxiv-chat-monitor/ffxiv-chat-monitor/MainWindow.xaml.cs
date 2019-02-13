@@ -37,7 +37,8 @@ namespace ffxiv_chat_monitor
         {
             InitializeComponent();
 
-            memoryHelper.HookMemoryProcess();
+            memoryHelper.GetMemoryProcessList();
+            memoryHelper.HookMemoryProcess(0);
         }
 
         private void btnStartChatWatch_Click(object sender, RoutedEventArgs e)
@@ -57,7 +58,7 @@ namespace ffxiv_chat_monitor
 
         private void BtnSettings_Click(object sender, RoutedEventArgs e)
         {
-            SettingsWindow settingWindow = new SettingsWindow(settingsHelper);
+            SettingsWindow settingWindow = new SettingsWindow(settingsHelper, memoryHelper);
             settingWindow.Show();
         }
 
