@@ -47,6 +47,7 @@ namespace ffxiv_chat_monitor
             _cancelWatchTokenSource = new CancellationTokenSource();
             CancellationToken cancellationToken = _cancelWatchTokenSource.Token;
             Task.Run(() => WatchChatLog(cancellationToken));
+            this.Title = "Chat Monitor - Running";
         }
 
         private void BtnStopChatWatch_Click(object sender, RoutedEventArgs e)
@@ -54,6 +55,7 @@ namespace ffxiv_chat_monitor
             _cancelWatchTokenSource.Cancel();
             // free this token from memory, else we'll start leaking - we make a new one each time we press start anyway
             _cancelWatchTokenSource.Dispose();
+            this.Title = "Chat Monitor - Stopped";
         }
 
         private void BtnSettings_Click(object sender, RoutedEventArgs e)
