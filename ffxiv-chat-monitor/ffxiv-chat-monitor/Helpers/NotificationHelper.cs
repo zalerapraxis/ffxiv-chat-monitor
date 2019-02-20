@@ -25,11 +25,14 @@ namespace ffxiv_chat_monitor.Helpers
 
         public void SoundNotifyUser()
         {
-            SoundPlayer player = new SoundPlayer("notification.wav");
-            player.LoadCompleted += delegate {
-                player.Play();
-            };
-            player.LoadAsync();
+            if (MainWindow.processHwid != MemoryHelper.GetForegroundWindow())
+            {
+                SoundPlayer player = new SoundPlayer("notification.wav");
+                player.LoadCompleted += delegate {
+                    player.Play();
+                };
+                player.LoadAsync();
+            }
         }
     }
 }
