@@ -21,7 +21,8 @@ namespace ffxiv_chat_monitor.Helpers
             { "0016", "Linkshell 7" },
             { "0017", "Linkshell 8" },
             { "000A", "Say chat" },
-            { "000C", "Private Messages" }
+            { "000C", "Private Messages (Outgoing)" },
+            { "000D", "Private Messages (Incoming)" }
             // get fc chat code eventually
         };
 
@@ -29,7 +30,8 @@ namespace ffxiv_chat_monitor.Helpers
         internal OrderedDictionary _chatCodesWatchingDictionary = new OrderedDictionary
         {
             { "0016", "Linkshell 7" },
-            { "000C", "Private Messages" }
+            { "000C", "Private Messages (Outgoing)" },
+            { "000D", "Private Messages (Incoming)" }
         };
     }
 }
